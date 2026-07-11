@@ -1,24 +1,109 @@
 \section{Implementation}
 \label{sec:implementation}
 
-\todo{Describe the tools, libraries, repositories, and versions used for the implementation.}
+The Metrics Recorder was implemented in Python in our CASCADE fork. It follows
+the architecture from Fig.~\ref{fig:metrics-architecture} and uses only standard
+library functionality such as \texttt{json}, \texttt{time}, and
+\texttt{contextvars} for its core operation. It integrates with CASCADE's pinned
+\texttt{openai}~2.31.0 client for LLM usage data and the existing
+\texttt{docker}~7.1.0 execution layer. Table~\ref{tab:implementation-artifacts}
+summarizes the main implementation artifacts.
 
-\todo{Explain the modifications made to the Metrics Recorder / CASCADE artifacts. Reference concrete files, modules, scripts, or commits in the GitHub repository instead of duplicating all code here.}
+\subsection{Recorder and Metrics Utility}
+\label{sec:implementation-recorder}
 
-\todo{Document how the implementation can be built, configured, and run. Mention important assumptions and required environment variables or dependencies.}
+The extension introduces an abstract recorder interface that separates
+instrumentation from storage. Its \path{record_event()} operation receives a
+named event and arbitrary fields; \path{write_summary()} finalizes the run. The
+default file-backed implementation owns one run. On construction it creates a
+run identifier, stores the pipeline configuration, initializes its aggregates,
+and emits a \texttt{run\_started} event.
 
-\begin{table}
+For every subsequent event, the recorder adds a UTC timestamp and run ID, merges
+the inherited metric context, normalizes values for JSON serialization, and
+updates its in-memory aggregates. It then appends the event as one JSON object to
+\path{metrics.events.jsonl}. The aggregates cover event counts and failures,
+elapsed time, LLM usage by model, component, and phase, and per-sample values.
+At finalization, they are written to \path{metrics.summary.json}. Monetary cost
+is deliberately left unset because pricing depends on provider and time.
+
+The Metrics Utility module stores the active recorder and context in two
+\texttt{ContextVar} instances. Its \texttt{metric\_context()}
+helper adds sample, method, component, or phase information to nested calls;
+\texttt{time\_block()} measures elapsed time with \texttt{time.perf\_counter()}
+and records success or failure without suppressing exceptions. The utility also
+normalizes both prompt and completion tokens as well as input and output tokens
+used by OpenAI-compatible APIs. Calls become no-ops when no recorder is active.
+
+\begin{table}[ht]
     \centering
-    \caption{TODO: Main implementation artifacts.}
+    \caption{Main implementation artifacts relative to \texttt{src/cascade/}.}
     \label{tab:implementation-artifacts}
-    \begin{tabular}{ll}
+    \scriptsize
+    \begin{tabular}{@{}p{0.43\textwidth}p{0.45\textwidth}@{}}
         \toprule
-        Artifact & Purpose \\
+        \raggedright Artifact & \raggedright Purpose \tabularnewline
         \midrule
-        TODO: \texttt{path/to/file} & TODO \\
-        TODO: \texttt{scripts/run\_experiments.sh} & TODO \\
+        \raggedright \path{metrics/BaseMetricsRecorder.py}
+            & \raggedright Recorder interface \tabularnewline
+        \raggedright \path{metrics/MetricsRecorder.py}
+            & \raggedright JSONL persistence and summary aggregation \tabularnewline
+        \raggedright \path{utils/Metrics.py}
+            & \raggedright Context, timing, and usage normalization \tabularnewline
+        \raggedright \path{PipelineFactory.py}, \path{Pipeline.py}
+            & \raggedright Construction and run lifecycle \tabularnewline
+        \raggedright \path{generation/Generation.py}, \path{generation/executor/OpenAICaller.py}
+            & \raggedright Attribution and LLM-call metrics \tabularnewline
+        \raggedright \path{analysis/executor/JavaExecutor.py}, \path{utils/DockerizedWrapper.py}
+            & \raggedright Java and Docker execution timings \tabularnewline
         \bottomrule
     \end{tabular}
 \end{table}
 
-\sectioncontributors{TODO: List the project members who contributed to this section.}
+\subsection{Pipeline Integration and Instrumentation}
+\label{sec:implementation-integration}
+
+The CLI forwards the \texttt{-o} output directory to
+\texttt{PipelineFactory.build()}. The factory either loads a recorder selected
+by an optional \texttt{MetricsRecorder} configuration block or constructs the
+default implementation, passing it the output path and configuration snapshot.
+It then injects the recorder into the pipeline. At the start of
+\texttt{Pipeline.execute()}, the recorder is installed as the active sink. A
+\texttt{finally} block records \texttt{run\_finished}, writes the summary, and
+restores the previous context on both successful and failed runs. Metrics write
+errors are reported but do not terminate the analysis.
+
+Instrumentation covers both LLM work and non-LLM overhead. The pipeline times
+extraction, filtering, and analysis. The analysis implementations add setup,
+per-method, and teardown measurements. \path{generation/Generation.py} wraps
+generation and repair calls in sample and component context, while the test
+generator refines individual generation phases. \path{OpenAICaller.py} records
+one event for every attempt, including failed retries, with model, endpoint,
+finish reason, elapsed time, and token usage. Finally, the Java executor and
+Docker wrapper measure project preparation, builder/container operations, and
+test execution.
+
+\subsection{Configuration, Execution, and Verification}
+\label{sec:implementation-operation}
+
+The fork is installed into its virtual environment with
+\texttt{./cascade.venv/bin/pip install .} Metrics recording is enabled by
+default; a custom recorder can be selected by name, module path, and keyword
+arguments in the pipeline configuration. CASCADE is then invoked as follows:
+
+\begin{quote}
+\small\texttt{CASCADE run -i <project> -o <output> -c <config.json>}
+\end{quote}
+
+LLM-backed runs require \texttt{OPENAI\_API\_KEY}, or corresponding credentials
+and a base URL for an alternative OpenAI-compatible endpoint. The execution path
+also requires a local Java runtime and a reachable Docker daemon; Maven commands
+run inside the configured Docker image. The raw event stream and summary are
+written directly to the selected output directory.
+
+With this setup, every standard CASCADE invocation automatically produces both
+detailed events and aggregate metrics without requiring changes to individual
+pipeline components. These artifacts provide the measurement data used for the
+model and resource comparisons in Sect.~\ref{sec:evaluation}.
+
+\sectioncontributors{Alexander Hristov and Caspar Moritz Klein.}
