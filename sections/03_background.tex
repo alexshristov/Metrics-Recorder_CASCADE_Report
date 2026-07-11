@@ -28,7 +28,17 @@ Metrics used here are mainly recall, precision, specificity, pair-wise fix preci
     rec = \frac{TP}{TP + FN} \quad  prec = \frac{TP}{TP + FP} \quad spec = \frac{TN}{TN + FP} \quad F_1=\frac{2\cdot prec \cdot rec}{prec + rec}
 \end{equation*}
 
-\subsection{Quantitative LLM Metrics}
+\subsection{Tokens}
+
+Large Language Models process text as tokens instead of individual characters. 
+Tokens are units of text. 
+They can be i.e. words or part of words.
+Both the input as well as the output of a LLM model are represented as tokens that are concatenated to a text.
+\vspace{0.25cm}
+\noindent The computational cost of LLM's is closly related to the number of input and output tokens. 
+Longer sequences of tokens can also influence the execution time because of the amout of computation needed.
+Because of that, token usage is an important metric in any LLM usecase.
+
 
 \begin{figure}
     \centering
