@@ -1,0 +1,51 @@
+\documentclass[tikz,border=6pt]{standalone}
+
+\usetikzlibrary{arrows.meta,fit,positioning}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\begin{document}
+  \begin{tikzpicture}[
+    >=Stealth,
+    line cap=round,
+    line join=round,
+    node distance=0.2cm
+  ]
+    \begin{axis}[
+        xlabel={tokens used},
+        ylabel={f1 score achieved},
+        grid=major,
+        ticklabel style={
+          /pgf/number format/fixed,
+          /pgf/number format/precision=2
+        }
+    ]
+    \addplot[
+        only marks,
+        mark=*,
+        nodes near coords,
+        point meta=explicit symbolic,
+    ]
+    table[
+      x=token,
+      y=f1,
+      meta=name,
+      col sep=comma
+    ]{results_data.csv};
+
+    %\node[anchor=west,text width=3.3em,align=left] (PF) at (axis cs:260,11000) {Pareto-Front};
+    
+    \addplot[
+      thick,
+    ]
+    coordinates {
+        (7698,0.03)
+        (12854,0.06)
+        (19951,0.10)
+    };
+    \end{axis}
+
+    
+  \end{tikzpicture}
+\end{document}

@@ -1,76 +1,84 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-\todo{Define the research questions or hypotheses evaluated by the experiments.}
+%\todo{Define the research questions or hypotheses evaluated by the experiments.}
 
-\todo{Describe the experimental setup, datasets, hardware/software environment, baseline, parameters, and execution procedure.}
+%\todo{Describe the experimental setup, datasets, hardware/software environment, baseline, parameters, and execution procedure.}
 
-\todo{Define all metrics used in the evaluation and justify why they are suitable for the problem.}
-The answer the question on how CASCADE performs for different LLMs, we ran our extended version of CASCADE on the core dataset of the original paper.
-The LLMs we used for this experiments were gpt-oss:20b, mistral-small3.2:latest and qwen2.5-coder:14b-instruct, which we hosted on a local setup.\footnote{
+%\todo{Define all metrics used in the evaluation and justify why they are suitable for the problem.}
+The answer the question on how CASCADE performs for different LLMs, we ran our extended version of CASCADE on the core dataset, being the 72 pairs of inconsistent and consistent code-documentation samples, of the original paper.
+The LLMs we used for this experiments were gpt-oss:20b\cite{ollama_gpt_oss_20b}, mistral-small3.2:latest\cite{ollama_mistral-small3.2_24b} and qwen2.5-coder:14b-instruct\cite{ollama_qwen2.5-coder-14b-instruct}, which we hosted on a local setup.\footnote{
 \textbf{Hosting Environment:} Experiments ran on a desktop machine with Windows 11, a Ryzen 9 7900X 12-Core CPU, 64GB RAM, and a Radeon RX 7900 XT (20GB VRAM, being throttled to a maximum frequency of 1600 MHz for heat reasons) using ollama (0.21.1) to host the specified models.}
-Additionally we used an externally hosted LLM: Qwen3-Coder-Next-FP8, which was hosted by our university.
+Additionally we used an externally hosted LLM: Qwen3-Coder-Next-FP8\cite{qwen_qwen3_coder_next_tech_report}, which was hosted by our university.
 The external LLM is meant to demonstrate a trade-off between having access to stronger hardware and thus larger models, but having to share that access with many other people.
-\begin{table}[tb]
+
+For each LLM, we measured the result of the CASCADE program, as well as the output of our MetricsRecorder. From the output metrics, we focus on the average execution time and the average LLM-token usage over all datapoints.
+
+\begin{table}
    \centering
    \caption{Original metrics of the benchmark for a balanced 50\%/50\% split (71 inconsistent/71 consistent). All values are rounded to two decimals.}\label{tab:results}
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
  & $prec.$ & $spec.$ & $rec.$ & \textit{PFP} & $F_1$ \\ \midrule
 gpt-oss & \textbf{.67} & .97 & .\textbf{06} & 1.00 & \textbf{.10} \\
-Qwen3-Coder-Next-FP8 & .50 & .99 & .01 & 1.00 & .03 \\
 mistral-small & .50 & .99 & .01 & 1.00 & .03 \\
 qwen2.5-coder & \textbf{.67} & .99 & .03 & .50 & .06 \\
+Qwen3-Coder-Next-FP8 & .50 & .99 & .01 & 1.00 & .03 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[tb]
+\begin{table}
    \centering
-   \caption{Per-example resource cost (mean elapsed time in seconds, mean total LLM tokens, mean repair-loop count) broken down by classification outcome (version: phase2). eTN/eFN exclude pipeline errors; ERR counts all errored samples regardless of outcome.}\label{tab:resources}
+   \caption{Measured metrics per LLM and result category (mean elapsed time in seconds, mean total LLM tokens, mean repair-loop count). Best results are highlighted}\label{tab:resources}
 \begin{tabular}{@{}llrrrr@{}}
 \toprule
- &  & count & time & tokens & repair-loops \\ \midrule
-\multirow{8}{*}{gpt-oss} & total & 142 & 197.9 & 19951 & 0.67 \\
- & TP & 4 & 164.7 & 16967 & 0.00 \\
- & FP & 2 & 180.3 & 19566 & 0.00 \\
- & TN & 70 & 204.1 & 20597 & 0.78 \\
- & FN & 66 & 193.8 & 19458 & 0.63 \\
- & eTN & 20 & 173.2 & 15190 & 0.00 \\
- & eFN & 22 & 170.1 & 16813 & 0.00 \\
- & ERR & 94 & 211.4 & 21833 & 1.13 \\
+ &  & count & time & tokens \\ \midrule
+\multirow{8}{*}{gpt-oss}
+ & \textbf{total} & 142 & 197.9 & 19951 \\
+ & TP & 4 & 164.7 & 16967 \\
+ & FP & 2 & 180.3 & 19566 \\
+ & TN & 70 & 204.1 & 20597 \\
+ & FN & 66 & 193.8 & 19458 \\
+ & eTN & 20 & 173.2 & 15190 \\
+ & eFN & 22 & 170.1 & 16813 \\
+ & ERR & 94 & 211.4 & 21833 \\
  \midrule
- \multirow{8}{*}{mistral-small} & total & 142 & 250.7 & 7698 & 1.15 \\
- & TP & 1 & 128.7 & 7773 & 0.00 \\
- & FP & 1 & 231.7 & 14356 & 0.00 \\
- & TN & 71 & 247.6 & 6780 & 0.89 \\
- & FN & 69 & 256.0 & 8546 & 1.45 \\
- & eTN & 13 & 213.7 & 13506 & 0.46 \\
- & eFN & 9 & 206.5 & 12631 & 0.22 \\
- & ERR & 118 & 259.3 & 6625 & 1.69 \\
+ \multirow{8}{*}{mistral-small} 
+ & \textbf{total} & 142 & 250.7 & \textbf{7698} \\
+ & TP & 1 & 128.7 & 7773 \\
+ & FP & 1 & 231.7 & 14356 \\
+ & TN & 71 & 247.6 & 6780 \\
+ & FN & 69 & 256.0 & 8546 \\
+ & eTN & 13 & 213.7 & 13506 \\
+ & eFN & 9 & 206.5 & 12631 \\
+ & ERR & 118 & 259.3 & 6625 \\
  \midrule
- \multirow{8}{*}{qwen2.5-coder} & total & 142 & 168.6 & 12854 & 1.03 \\
- & TP & 2 & 139.9 & 10112 & 0.00 \\
- & FP & 1 & 111.2 & 10427 & 0.00 \\
- & TN & 71 & 168.7 & 12833 & 0.92 \\
- & FN & 68 & 170.2 & 12992 & 1.21 \\
- & eTN & 22 & 143.4 & 10897 & 0.09 \\
- & eFN & 16 & 174.4 & 11646 & 0.25 \\
- & ERR & 101 & 174.3 & 13549 & 1.46 \\
+ \multirow{8}{*}{qwen2.5-coder}
+ & \textbf{total} & 142 & \textbf{168.6} & 12854 \\
+ & TP & 2 & 139.9 & 10112 \\
+ & FP & 1 & 111.2 & 10427 \\
+ & TN & 71 & 168.7 & 12833 \\
+ & FN & 68 & 170.2 & 12992 \\
+ & eTN & 22 & 143.4 & 10897 \\
+ & eFN & 16 & 174.4 & 11646 \\
+ & ERR & 101 & 174.3 & 13549 \\
  \midrule
- \multirow{8}{*}{Qwen3-Coder-Next-FP8} & total & 142 & 357.1 & 21356 & 0.46 \\
- & TP & 1 & 408.4 & 18377 & 0.00 \\
- & FP & 1 & 348.4 & 14486 & 0.00 \\
- & TN & 71 & 366.9 & 25274 & 0.50 \\
- & FN & 69 & 346.3 & 17468 & 0.43 \\
- & eTN & 12 & 336.0 & 19869 & 0.00 \\
- & eFN & 5 & 427.3 & 38658 & 0.20 \\
- & ERR & 123 & 355.9 & 20878 & 0.71 \\
+ \multirow{8}{*}{Qwen3-Coder-Next-FP8}
+ & \textbf{total} & 142 & 357.1 & 21356 \\
+ & TP & 1 & 408.4 & 18377 \\
+ & FP & 1 & 348.4 & 14486 \\
+ & TN & 71 & 366.9 & 25274 \\
+ & FN & 69 & 346.3 & 17468 \\
+ & eTN & 12 & 336.0 & 19869 \\
+ & eFN & 5 & 427.3 & 38658 \\
+ & ERR & 123 & 355.9 & 20878 \\
  \bottomrule
 \end{tabular}
 \end{table}
 
 The experiments produced a lot of data, we try to condense it down to a few insightful tables, though for a complete overview the results can be viewed with this document. \todo{Add a link or a way to get to the data}
+
 Table \ref{tab:results} shows the original metrics (Precision, Recall, etc.) on the different models.
 We can immediately notice, that the recall is much lower than for the original CASCADE run (0.21) for all of the LLMs.
 This is because in our runs, the LLMs rarely reported an Inconsistency.
@@ -79,12 +87,14 @@ From these values the gpt-oss model is the best regarding recall and shares the 
 
 Table \ref{tab:resources} shows the most important metrics we recorded using the introduced MetricsRecorder.
 The samples are split into multiple groups for each model. 
-The TP,FP,TN and FN groups correspond to the samples that returned \textbf{T}rue-\textbf{P}ositives,\textbf{F}alse-\textbf{P}ositives and so on.
-The eTN and eFN are error-corrected groups. 
+The TP, FP, TN and FN groups correspond to the samples that returned True-Positives, False-Positives and so on.
+The eTN and eFN are error-corrected groups.
 They are subsets of TN and FN respectively, where CASCADE did not respond NoInco because all the tests passed, but rather because of any errors during the Pipeline.
-An error occuring can mean many things, but during the run we mostly found errors to occur because of either 1. timeouts during an LLM api-call (>1min), or 2. the LLM did not understand how to use the tools provided to fix compiler errors, leading to a failed code extraction from the answer.
+An error occuring can mean many things, but during the run we mostly found errors to occur because of either
+1. timeouts during an LLM api-call (>1min), or 2. the LLM did not understand how to use the tools provided to fix compiler errors, leading to a failed code extraction from the answer.
+The ERR category includes all error-results.
+The data shows, that mistral-small had the lowest average token usage, while qwen2.5-coder had the lowest average execution time.
+We can also see that the LLMs make many mistakes, with gpt-oss having the lowest error count of 94 errors ($\sim$66\% of samples).
+The high error rate lowers the recall rate by reducing the amount of samples, on which CASCADE can effectively operate.
 
-
-\todo{Present the results using tables and figures. Reference the repository scripts that reproduce the experiments.}
-
-\sectioncontributors{TODO: List the project members who contributed to this section.}
+\sectioncontributors{Caspar Klein (writer, performed experiments)}

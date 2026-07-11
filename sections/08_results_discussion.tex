@@ -4,18 +4,57 @@
 \subsection{Results Discussion}
 \label{sec:discussion}
 
-\todo{Interpret the experiment results. Explain why the observed behavior occurs, where the results support the approach, and where they reveal limitations.}
+The results have shown, that gpt-oss provides the best inconsistency detection from all the tested models.
+Though that model has neither the lowest time usage nor the lowest token usage.
 
-\todo{Discuss threats to validity, such as dataset size, measurement noise, implementation assumptions, and generalizability.}
+This shows, that having good detection results, might not correlate to a good performance overall, depending on what is valued by the developer.
+
+From our data we can construct pareto fronts for the LLMs we tested (see Figure \ref{fig:pareto-token-time}). 
+The pareto-front, that combines token usage with f1-score, does not carry much weight as it is now, as the cost per token
+is not equal to all models.
+We can see this for mistral-small, as it required the least amount of tokens on average,
+but still took so long to execute, that it isn't an optimal solution when optimizing for f1-score and time.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.52\textwidth]{figures/results_pareto_token_f1.pdf}
+    \includegraphics[width=0.52\textwidth]{figures/results_pareto_time_f1.pdf}
+    \caption{Token/time usage graph with pareto front for optimal results}
+    \label{fig:pareto-token-time}
+\end{figure}
+
+Our data also suggest that CASCADE has compatibility restrictions.
+The results linked in the original Paper\footnote{Currently the results can be found at \url{https://zenodo.org/records/19483108}}
+have an error rate, of $\sim$25\% of datapoints (217 of 885 samples).
+Our results have an error rate of >66\% (94 of 142 samples) in the core dataset for all tested models.
+This difference likely stems from the different models used, although side effects from our implementation cannot be ruled out.
+The results we cited of the original Paper were generated using the model gpt-4.1-mini.
+
+
+Our data on the inconsistency detection is not very reliable, as the subset of samples on which CASCADE ran successfully is quite small.
+A more reliable result would require lowering the error rate or executing a larger part of the dataset.
+Although we can show a tendency. To strengthen the incompatibility theory, we should run our version of CASCADE using the same model as in the original paper.
+That was not possible for this paper due to monetary limitations.
+
+Also our data shows that running a local LLM setup to execute CASCADE can be an alternative to using a larger model hosted by your organization.
 
 \subsection{Conclusion}
 \label{sec:conclusion}
 
-\todo{Summarize the problem, approach, implementation, and key evaluation findings. Keep this concise and evidence-based.}
+In this work, we provided a metrics recorder to CASCADE to capture runtime events and measure secondary metrics of the execution of CASCADE.
 
+We show that from the models we tested, gpt-oss performed the best on the original metrics,
+while introducing secondary metrics makes qwen2.5-coder a good alternative.
+
+We also note that at some point in our experiments we deviated so much from the original CASCADE setup, that we achieved a much higher error rate, which should be investigated further.
 \subsection{Future Work}
 \label{sec:future-work}
 
-\todo{Describe concrete next steps that could improve the tool, broaden the evaluation, automate more of the workflow, or address current limitations.}
-
-\sectioncontributors{TODO: List the project members who contributed to this section.}
+Although we have brought some insight to the use of CASCADE with different LLMs, a few questions are left open for further research.
+\begin{itemize}
+    \item As stated earlier, we had a high error rate during the experiments, which should be investigated.
+    \item We tested 3 LLMs on our setup and 1 external LLM during our experiments.
+        While that provides some insight to which one of these one could use, it provides no insight of the efficiency of other LLMs on the program.
+        More models should be tested in order to find better optimizations.
+\end{itemize}
+\sectioncontributors{Alexander Hristov(data analysis) and Caspar Moritz Klein(writer, data analysis).}
