@@ -3,25 +3,36 @@
 
 
 
-\subsection{Deting Inconsistencies}
+\subsection{Detecting Inconsistencies}
 
 Testing source code and its documentation on its consistency has long been an important topic in software engineering.
 The recent advances of LLM's has created the possibility for a number of new approaches. 
 One of these aproaches is DocChecker. 
 It uses a pre-trained language model to identify and correct inconsistent comments.
 Another related aproach is C4RLLaMA, which also compares comments with code with its fine tuned model based on the open source model CodeLLaMa.
-These aproaches prior to CASCADE demonstrate, that LLM's can outperform traditional aproaches without LLM's.
+These aproaches prior to CASCADE demonstrate, that LLM's can outperform traditional aproaches without them.
 
 \subsection{LLM Efficiency Detection}
 
 
-We admit, that efficiency analysis on LLM tools is nothing new, but we noticed that in papers about inconsistency detection it is missing most of the time and that it would it add to the quality of research in this field.
+One tool, which is a bit outside of the topic, but still uses LLM's and has an efficiency analyisis is FD-FACTORY.
+In this tool LLM's are used to generate fuzz driver for DL API testing.
+It aims to analyse reliability and security. The efficiency analysis includes API Call, tokens and repair cycles.
+This is very similar to the aproach we will do on the CASCADE paper.
+Efficiency analysis on LLM tools is already done in many papers, but we noticed that in papers about inconsistency detection it is missing most of the time and think that it would add to the quality of research in this field.
  
+\sectioncontributors{Bruno Hemoura}
 
-\todo{Discuss relevant research, related tools, and existing approaches. Cite scientific papers, tool documentation, websites, and other sources used during the project.}
+\subsection{references}
 
-\todo{Describe the selected tool's current state. Explain what it already supports, what is missing, and how your work differs from existing approaches.}
+Anh T. V. Dau, Nghi D. Q. Bui, and Jin L. C. Guo. 2023. Bootstrapping Code-Text Pretrained Language Model to Detect
+Inconsistency Between Code and Comment. CoRR abs/2306.06347 (2023). arXiv:2306.06347 doi:10.48550/ARXIV.2306.
+06347
 
-\todo{End this section with a short positioning paragraph that makes clear why your project is needed despite related work.}
+Guoping Rong, Yongda Yu, Song Liu, Xin Tan, Tianyi Zhang, Haifeng Shen, and Jidong Hu. 2025. Code Comment
+Inconsistency Detection and Rectification Using a Large Language Model. In 47th IEEE/ACM International Conference on Software Engineering, ICSE 2025, Ottawa, ON, Canada, April 26 - May 6, 2025. IEEE, 1832–1843. doi:10.1109/ICSE55347.
+2025.00035
 
-\sectioncontributors{TODO: List the project members who contributed to this section.}
+Tianming Zheng, Fanchao Meng, Ping Yi and Yue Wu
+Automating fuzz driver generation for deep learning libraries with large language models
+doi:10.1186/s42400-025-00532-9
