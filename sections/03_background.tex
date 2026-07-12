@@ -2,15 +2,15 @@
 \label{sec:background}
 \subsection{CASCADE}
 
-CASCADE (Consistency Analysis of Source Code and Documentation through Execution) is a paper that introduces tool that is used to  identify inconsistencies in the coupling between code and documentation, while keeping false positives low.
+CASCADE (Consistency Analysis of Source Code and Documentation through Execution) \cite{Kiecker_2026} is a paper that introduces a tool that is used to  identify inconsistencies between source code and documentation, while keeping false positives low.
 It does not just put code and documentation into a LLM and ask it to find inconsistencies, but uses a more sophisticated approach that involves generating tests and executing them on the code.
 \vspace{0.25cm}
-\noindent In the first step it translates the documentation into a set of tests that are then executed on the code.
-These generated tests are then executed on the original implementation to check if the code bahaves as indended by the documentation.
-Since LLM generated tests are not always correct, failing tests do not always mean inconsistent code.
+\noindent In the first phase, it translates the documentation into a set of tests that are then executed on the code.
+These generated tests are then executed on the original implementation to check if the code behaves as intended by the documentation.
+Since LLM-generated tests are not always correct, failing tests do not always mean inconsistent code.
 \vspace{0.25cm}
 \noindent To reduce the number of false positives, CASCADE uses a second step that involves generating its own code from the documentation and executing the same tests on this generated code.
-Code is now only flagged as inconsistent, when the tests of the first step fail, but pass on the generated code from step 2.
+Code is only flagged as inconsistent, when the tests of the first phase fail, but pass on the generated code from phase 2.
 
 \begin{figure}[H]
     \centering
@@ -32,12 +32,13 @@ Metrics used here are mainly recall, precision, specificity, pair-wise fix preci
 
 Large Language Models process text as tokens instead of individual characters. 
 Tokens are units of text. 
-They can be i.e. words or part of words.
+They can represent words, parts of words, or punctuation.
 Both the input as well as the output of a LLM model are represented as tokens that are concatenated to a text.
+
 \vspace{0.25cm}
-\noindent The computational cost of LLM's is closly related to the number of input and output tokens. 
-Longer sequences of tokens can also influence the execution time because of the amout of computation needed.
-Because of that, token usage is an important metric in any LLM usecase.
+\noindent The computational cost of LLMs is closely related to the number of input and output tokens. 
+Longer sequences of tokens can also influence the execution time because of the amount of computation needed.
+Because of that, token usage is an important metric in any LLM use case.
 
 
 \begin{figure}

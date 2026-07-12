@@ -6,33 +6,19 @@
 \subsection{Detecting Inconsistencies}
 
 Testing source code and its documentation on its consistency has long been an important topic in software engineering.
-The recent advances of LLM's has created the possibility for a number of new approaches. 
-One of these aproaches is DocChecker. 
+The recent advances of LLMs has created the possibility for a number of new approaches. 
+One of these approaches is DocChecker \cite{DocChecker}. 
 It uses a pre-trained language model to identify and correct inconsistent comments.
-Another related aproach is C4RLLaMA, which also compares comments with code with its fine tuned model based on the open source model CodeLLaMa.
-These aproaches prior to CASCADE demonstrate, that LLM's can outperform traditional aproaches without them.
+Another related approach is C4RLLaMA \cite{C4RLLAMA}, which also compares comments with code with its fine-tuned model based on the open source model CodeLLaMa.
+These approaches prior to CASCADE \cite{Kiecker_2026} demonstrate, that LLM's can outperform traditional aproaches without them.
 
 \subsection{LLM Efficiency Detection}
 
 
-One tool, which is a bit outside of the topic, but still uses LLM's and has an efficiency analyisis is FD-FACTORY.
+One tool, which is a bit outside of the topic, but still uses LLM's and has an efficiency analysis is FD-FACTORY \cite{FD-FACTORY}.
 In this tool LLM's are used to generate fuzz driver for DL API testing.
 It aims to analyse reliability and security. The efficiency analysis includes API Call, tokens and repair cycles.
 This is very similar to the aproach we will do on the CASCADE paper.
 Efficiency analysis on LLM tools is already done in many papers, but we noticed that in papers about inconsistency detection it is missing most of the time and think that it would add to the quality of research in this field.
  
 \sectioncontributors{Bruno Hemoura}
-
-\subsection{references}
-
-Anh T. V. Dau, Nghi D. Q. Bui, and Jin L. C. Guo. 2023. Bootstrapping Code-Text Pretrained Language Model to Detect
-Inconsistency Between Code and Comment. CoRR abs/2306.06347 (2023). arXiv:2306.06347 doi:10.48550/ARXIV.2306.
-06347
-
-Guoping Rong, Yongda Yu, Song Liu, Xin Tan, Tianyi Zhang, Haifeng Shen, and Jidong Hu. 2025. Code Comment
-Inconsistency Detection and Rectification Using a Large Language Model. In 47th IEEE/ACM International Conference on Software Engineering, ICSE 2025, Ottawa, ON, Canada, April 26 - May 6, 2025. IEEE, 1832–1843. doi:10.1109/ICSE55347.
-2025.00035
-
-Tianming Zheng, Fanchao Meng, Ping Yi and Yue Wu
-Automating fuzz driver generation for deep learning libraries with large language models
-doi:10.1186/s42400-025-00532-9
