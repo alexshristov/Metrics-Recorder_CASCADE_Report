@@ -3,10 +3,23 @@
 
 The main contributions of this project are:
 \begin{itemize}
-    \item \todo{Contribution 1: describe the implemented tool adaptation or extension.}
-    \item \todo{Contribution 2: describe the created experiment setup, scripts, datasets, or artifacts.}
-    \item \todo{Contribution 3: describe the evaluation and the evidence it provides.}
-    \item \todo{Contribution 4: describe documentation, reproducibility support, or integration work.}
+    \item We designed and implemented a configurable, run-scoped Metrics
+    Recorder and Metrics Utility for CASCADE. The extension observes pipeline
+    execution without changing the inconsistency verdict or suppressing analysis
+    failures.
+    \item We instrumented the complete analysis path, including pipeline stages,
+    LLM attempts and token usage, repair activity, Java and Docker execution, and
+    failures. Each run produces a detailed JSON Lines event stream and an
+    aggregated JSON summary for analysis by model, component, phase, and sample.
+    \item We evaluated three locally hosted LLMs and one externally hosted LLM on
+    the balanced 142-sample core benchmark. The evaluation combines the original
+    detection metrics with runtime, token-usage, and failure measurements provided
+    by the recorder.
+    \item We identified trade-offs between detection performance and resource
+    usage: gpt-oss achieved the strongest detection result, qwen2.5-coder the
+    lowest mean runtime, and mistral-small the lowest mean token usage. The high
+    failure rates across the experiments also expose compatibility limitations and
+    constrain the reliability of the detection comparison.
 \end{itemize}
 
-\sectioncontributors{TODO: List the project members who contributed to this section.}
+\sectioncontributors{Alexander Hristov and Caspar Moritz Klein (writers).}
