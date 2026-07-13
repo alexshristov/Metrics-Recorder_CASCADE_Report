@@ -1,0 +1,5 @@
+token,time,f1,name
+19951,197.9,0.10,gpt-oss
+7698,250.7,0.03,mistral-small
+12854,168.6,0.06,qwen2.5-coder
+21356,357.1,0.03,Qwen3-Coder-Next-FP8

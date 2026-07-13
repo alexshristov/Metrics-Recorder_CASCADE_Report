@@ -1,21 +1,102 @@
 \section{Approach and Solution Description}
 \label{sec:solution-description}
 
-\todo{Describe the conceptual solution independent of implementation details. Explain the design decisions, assumptions, inputs, outputs, and expected behavior.}
+As described in Sect.~\ref{sec:background}, CASCADE's CLI and Pipeline Factory
+construct a configured pipeline for extraction, filtering, and analysis. The
+analysis coordinates the generators and executor and ultimately produces an
+inconsistency result. This result does not reveal which resources were consumed
+or where failures occurred. Our CASCADE fork therefore adds the separate metrics
+path shown in Fig.~\ref{fig:metrics-architecture}.\footnote{\url{https://github.com/alexshristov/CASCADE}}
+Pipeline components record observations through the Metrics Utility; the
+run-scoped Metrics Recorder aggregates them into a Metrics Report alongside the
+analysis result. This measurement path observes the pipeline without affecting
+its verdict.
 
-\todo{Use diagrams, tables, or examples to make the approach concrete.}
+\subsection{Run-Scoped Measurement Architecture}
+\label{sec:solution-architecture}
 
-\begin{table}
+Metrics are a cross-cutting concern: the pipeline knows the run configuration,
+the analysis knows the current sample, generators know the current phase, and
+only the LLM callers see token usage. Passing a recorder and all contextual
+fields through this complete call graph would introduce substantial coupling;
+independent file writers would instead produce inconsistent data.
+
+The Metrics Utility provides shared operations for emitting events, timing
+blocks, and adding temporary context. Nested operations inherit the current
+sample, method, component, and phase, allowing a low-level LLM call to be
+attributed without receiving these values as parameters. The Pipeline Factory
+constructs one configurable recorder for the pipeline run. The pipeline
+activates it during execution and finalizes it after both successful and failed
+runs.
+
+\begin{figure}[tb]
     \centering
-    \caption{TODO: Overview of design decisions.}
+    \includegraphics[width=0.82\textwidth]{figures/metrics_architecture.pdf}
+    \caption{Extended CASCADE pipeline architecture. The Pipeline Factory
+    provides the pipeline context, while the Metrics Utility uses the Metrics
+    Recorder to produce a separate Metrics Report alongside the analysis
+    results.}
+    \label{fig:metrics-architecture}
+\end{figure}
+
+\subsection{Recorded Data and Output}
+\label{sec:solution-event-model}
+
+The recorder captures three kinds of structured events: timings for pipeline
+operations, LLM-call data, and semantic facts such as sample counts or final
+verdicts. Timing events contain elapsed wall-clock time and success state.
+LLM-call events cover every attempt, including failures, and contain model,
+phase, duration, finish state, and normalized input, output, and total tokens.
+Recording failed attempts prevents retry-heavy models from appearing
+artificially efficient. Monetary cost is not calculated because prices depend
+on provider and date, while local models have no per-token API price.
+
+Each event is appended immediately to a JSON Lines stream. This detailed stream
+is the source of truth and preserves partial measurements if a run terminates
+early. In parallel, the recorder builds a compact JSON summary containing
+failure and timing totals, LLM usage grouped by model, component, and phase, and
+per-sample aggregates. The summary supports common comparisons, while the raw
+events allow new analyses without rerunning expensive experiments.
+
+Metrics are best-effort: instrumentation never suppresses an analysis exception,
+and a metrics write failure does not replace CASCADE's result. Downstream
+evaluation must therefore check that a run's measurement artifacts are complete.
+
+\subsection{Design Decisions and Scope}
+\label{sec:solution-decisions}
+
+Table~\ref{tab:design-decisions} summarizes the decisions that distinguish the
+approach from conventional logging.
+
+\begin{table}[ht]
+    \centering
+    \caption{Main design decisions for the Metrics Recorder.}
     \label{tab:design-decisions}
-    \begin{tabular}{lll}
+    \scriptsize
+    \begin{tabular}{@{}p{0.20\textwidth}p{0.32\textwidth}p{0.36\textwidth}@{}}
         \toprule
-        Decision & Rationale & Alternative considered \\
+        \raggedright Decision & \raggedright Rationale & \raggedright Alternative \tabularnewline
         \midrule
-        TODO & TODO & TODO \\
+        \raggedright Run-scoped context
+            & \raggedright Attributes nested events with limited coupling
+            & \raggedright Pass context through the full call graph \tabularnewline
+        \raggedright Structured events
+            & \raggedright Enables consistent aggregation
+            & \raggedright Extend component-specific text logs \tabularnewline
+        \raggedright Raw stream plus summary
+            & \raggedright Preserves detail and provides efficient totals
+            & \raggedright Retain only raw data or aggregates \tabularnewline
+        \raggedright Best-effort recording
+            & \raggedright Preserves CASCADE's analysis behavior
+            & \raggedright Fail the pipeline when recording fails \tabularnewline
         \bottomrule
     \end{tabular}
 \end{table}
 
-\sectioncontributors{TODO: List the project members who contributed to this section.}
+The resulting data supports comparisons of runtime, LLM attempts, token usage,
+repair activity, execution overhead, and failures by model, phase, or sample.
+The recorder does not improve detection or make LLM output deterministic; it
+provides the measurement basis used in Sect.~\ref{sec:evaluation}. Concrete
+integration points and artifacts are described in Sect.~\ref{sec:implementation}.
+
+\sectioncontributors{Alexander Hristov(writer, development) and Caspar Moritz Klein(development).}
