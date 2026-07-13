@@ -1,24 +1,22 @@
 \section{Introduction and Problem Description}
 \label{sec:problem-description}
 
-Large Language Models (LLMs) have gotten an increasingly important role in the field of Software Engineering.
+Large Language Models (LLMs) have become an increasingly important role in the field of Software Engineering.
 They make new approaches in tasks like code generation, code analysis, debugging possible.
-With the rising performance of these LLM's, the adoption in real workflows also increases and in most areas we see a real productivity improvement.
+With the rising performance of these LLMs, the adoption in real-world workflows also increases and in most areas we see a real productivity improvement.
 However, because of the rising demands on these systems, it gets more and more important to understand their behaviour and their intensive resource requirements.
-Besides the quality of their genereated outputs it is relevant to consider factors such as computational cost, response latency and also the influence these factors have on usability.
+Besides the quality of their generated outputs it is relevant to consider factors such as computational cost, response latency and also the influence these factors have on usability.
 
 \vspace{0.25cm}
-\noindent Most current evaluations of LLM-based software engineering tools primarily focus on performance metrics such as correctnis or wether evaluation tasks are completed in a satisfactory way.
+\noindent Most current evaluations of LLM-based software engineering tools primarily focus on performance metrics such as correctness or whether evaluation tasks are completed in a satisfactory way.
 While it is right to primarily focus on these metrics, it is important to be aware that they only show an incomplete view on how useful a tool is in practice.
 If a tool takes too long to come to a solution or the tool is too expensive to use, users might be discouraged from using it altogether despite its possibly stellar performance.
 
 \vspace{0.25cm}
-\noindent CASCADE is a recently proposed tool for inconsitency detection that detects a mismatch between code and documentation.
-While its paper shows its correctnis, little has been done to evaluate metrics like time and  resource requirements.
-Because the tool requires many LLM calls for code and test generation/improvement, it has merit to look at factors such as time, tokens consumption and cost.
-This is important because they may severely influence its real world usability.
-This paper is supposed to extend the evaluation of CASCADE by analyzing these aspects and look at the trade-offs between detection performance and efficiency.
-
-\todo{Introduce the report structure briefly, using one compact paragraph.}
+\noindent CASCADE \cite{Kiecker_2026} is a recently proposed tool for inconsistency detection that detects a mismatch between code and documentation.
+While its paper shows its correctness, little has been done to evaluate metrics like time and  resource requirements.
+Because the tool requires many LLM calls for code and test generation/improvement, it has merit to look at factors such as time, token consumption and cost.
+This is important because they may severely influence its real-world usability.
+This paper extends the evaluation of CASCADE \cite{Kiecker_2026} by analyzing these aspects and investigating the trade-offs between detection performance and efficiency.
 
 \sectioncontributors{Bruno Hemoura}
