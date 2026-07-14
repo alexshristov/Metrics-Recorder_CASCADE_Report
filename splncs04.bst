@@ -1500,8 +1500,8 @@ FUNCTION {presort}
   #1 entry.max$ substring$
   'sort.key$ :=
 }
-ITERATE {presort}
-SORT
+% Keep BibTeX's initial entry order, which follows each entry's first citation
+% in the auxiliary file.
 STRINGS { longest.label }
 INTEGERS { number.label longest.label.width }
 FUNCTION {initialize.longest.label}

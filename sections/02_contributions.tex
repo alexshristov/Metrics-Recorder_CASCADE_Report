@@ -4,7 +4,7 @@
 The main contributions of this project are:
 \begin{itemize}
     \item We designed and implemented a configurable, run-scoped Metrics
-    Recorder and Metrics Utility for CASCADE. The extension observes pipeline
+    Recorder and Metrics Utility for CASCADE~\cite{Kiecker_2026}. The extension observes pipeline
     execution without changing the inconsistency verdict or suppressing analysis
     failures.
     \item We instrumented the complete analysis path, including pipeline stages,
@@ -12,12 +12,14 @@ The main contributions of this project are:
     failures. Each run produces a detailed JSON Lines event stream and an
     aggregated JSON summary for analysis by model, component, phase, and sample.
     \item We evaluated three locally hosted LLMs and one externally hosted LLM on
-    the balanced 142-sample core benchmark. The evaluation combines the original
+    the balanced 142-sample core benchmark~\cite{Kiecker_2026}. The evaluation combines the original
     detection metrics with runtime, token-usage, and failure measurements provided
     by the recorder.
     \item We identified trade-offs between detection performance and resource
-    usage: gpt-oss achieved the strongest detection result, qwen2.5-coder the
-    lowest mean runtime, and mistral-small the lowest mean token usage. The high
+    usage: gpt-oss~\cite{ollama_gpt_oss_20b} achieved the strongest detection
+    result, qwen2.5-coder~\cite{ollama_qwen2.5-coder-14b-instruct} the lowest mean
+    runtime, and mistral-small~\cite{ollama_mistral-small3.2_24b} the lowest mean
+    token usage. The high
     failure rates limit the reliability of the detection comparison and motivate
     further study; these experiments do not isolate whether the failures arise
     from the selected models, the execution setup, or changes in our CASCADE fork.
