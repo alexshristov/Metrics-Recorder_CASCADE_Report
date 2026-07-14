@@ -18,8 +18,9 @@ The main contributions of this project are:
     \item We identified trade-offs between detection performance and resource
     usage: gpt-oss achieved the strongest detection result, qwen2.5-coder the
     lowest mean runtime, and mistral-small the lowest mean token usage. The high
-    failure rates across the experiments also expose compatibility limitations and
-    constrain the reliability of the detection comparison.
+    failure rates limit the reliability of the detection comparison and motivate
+    further study; these experiments do not isolate whether the failures arise
+    from the selected models, the execution setup, or changes in our CASCADE fork.
 \end{itemize}
 
 \sectioncontributors{Alexander Hristov (writer).}
